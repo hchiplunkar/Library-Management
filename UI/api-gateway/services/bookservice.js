@@ -14,7 +14,6 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
 const bookProto = grpc.loadPackageDefinition(packageDefinition).library;
 
 // Singleton gRPC client
-//const target = process.env.BOOK_SERVICE_HOST || "book-service:5002";
 const target = "book-service:5002";
 console.log("Connecting to BookService at:", target);
 
@@ -41,14 +40,6 @@ function grpcCall(method, request) {
     });
   });
 }
-// function grpcCall(method, request) {
-//   return new Promise((resolve, reject) => {
-//     client[method](request, (err, response) => {
-//       if (err) return reject(err);
-//       resolve(response);
-//     });
-//   });
-// }
 
 // Exposed API for API Gateway
 export default {

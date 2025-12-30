@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { addBook, getAllCategories } from "../api/bookApi";
 
-export default function BookForm({ onSuccess }) {
+export default function BookForm({ onSuccess, initialData }) {
   const [form, setForm] = useState({
     book_name: "",
     category_id: "",
@@ -14,24 +14,41 @@ export default function BookForm({ onSuccess }) {
     getAllCategories().then(res => setCategories(res.category || []));
   }, []);
 
+  useEffect(() => {
+    if (initialData) {
+      setForm({
+        book_name: initialData.book_name || "",
+        category_id: initialData.category_id || "",
+        author_id: initialData.author_id || "",
+        publisher_id: initialData.publisher_id || ""
+      });
+    }
+  }, [initialData]);
+
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
-    await addBook({
+    const payload = {
       ...form,
       category_id: Number(form.category_id),
       author_id: Number(form.author_id),
       publisher_id: Number(form.publisher_id)
-    });
-    onSuccess();
+    };
+    if (initialData) {
+      await updateBook(initialData.book_id, payload);
+    } else {
+      await addBook(payload);
+    }
+    onSuccess && onSuccess();
+    setForm({ book_name: "", category_id: "", author_id: "", publisher_id: "" });
   }
 
   return (
     <form onSubmit={handleSubmit}>
-      <h3>Add Book</h3>
+      <h3>{initialData ? "Edit Book" : "Add Book"}</h3>
       <input name="book_name" placeholder="Book Name" onChange={handleChange} />
       <select name="category_id" onChange={handleChange}>
         <option value="">Select Category</option>

@@ -1,24 +1,28 @@
-import { useQuery } from "@tanstack/react-query";
-import { getAllUsers } from "../api/userApi";
-import { Box, CircularProgress, Typography } from "@mui/material";
+import UserList from "../components/UserList";
+import UserForm from "../components/UserForm";
+import { Box, Typography } from "@mui/material";
+import { useState } from "react";
 
 export default function UsersPage() {
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["users"],
-    queryFn: getAllUsers
-  });
+  const [refresh, setRefresh] = useState(0);
+  const [selected, setSelected] = useState(null);
 
-  if (isLoading) return <CircularProgress />;
-  if (error) return <Typography>Error loading users</Typography>;
+  function handleSuccess() {
+    setRefresh(r => r + 1);
+    setSelected(null);
+  }
 
   return (
     <Box p={2}>
       <Typography variant="h5">Users</Typography>
-      {data.map(u => (
-        <Box key={u.user_id} p={1} mt={1} border="1px solid #ddd">
-          <Typography>{u.name}</Typography>
+      <Box display="flex" gap={2} mt={2}>
+        <Box flex={1}>
+          <UserList refresh={refresh} onEdit={setSelected} />
         </Box>
-      ))}
+        <Box width={320}>
+          <UserForm onSuccess={handleSuccess} initialData={selected} />
+        </Box>
+      </Box>
     </Box>
   );
 }

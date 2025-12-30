@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x11reservation.proto\x12\x07library\"6\n\x12ReservationRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x05\x12\x0f\n\x07\x62ook_id\x18\x02 \x01(\x05\"-\n\x13ReservationResponse\x12\x16\n\x0ereservation_id\x18\x01 \x01(\x05\x32^\n\x12ReservationService\x12H\n\x0bReserveBook\x12\x1b.library.ReservationRequest\x1a\x1c.library.ReservationResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x11reservation.proto\x12\x07library\"6\n\x12ReservationRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x05\x12\x0f\n\x07\x62ook_id\x18\x02 \x01(\x05\"-\n\x13ReservationResponse\x12\x16\n\x0ereservation_id\x18\x01 \x01(\x05\"+\n\x11ReturnbookRequest\x12\x16\n\x0ereservation_id\x18\x01 \x01(\x05\"-\n\x13\x44\x65leteReservRequest\x12\x16\n\x0ereservation_id\x18\x01 \x01(\x05\x32\xf7\x01\n\x12ReservationService\x12H\n\x0bReserveBook\x12\x1b.library.ReservationRequest\x1a\x1c.library.ReservationResponse\x12\x46\n\nReturnbook\x12\x1a.library.ReturnbookRequest\x1a\x1c.library.ReservationResponse\x12O\n\x11\x44\x65leteReservation\x12\x1c.library.DeleteReservRequest\x1a\x1c.library.ReservationResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -35,6 +35,10 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_RESERVATIONREQUEST']._serialized_end=84
   _globals['_RESERVATIONRESPONSE']._serialized_start=86
   _globals['_RESERVATIONRESPONSE']._serialized_end=131
-  _globals['_RESERVATIONSERVICE']._serialized_start=133
-  _globals['_RESERVATIONSERVICE']._serialized_end=227
+  _globals['_RETURNBOOKREQUEST']._serialized_start=133
+  _globals['_RETURNBOOKREQUEST']._serialized_end=176
+  _globals['_DELETERESERVREQUEST']._serialized_start=178
+  _globals['_DELETERESERVREQUEST']._serialized_end=223
+  _globals['_RESERVATIONSERVICE']._serialized_start=226
+  _globals['_RESERVATIONSERVICE']._serialized_end=473
 # @@protoc_insertion_point(module_scope)

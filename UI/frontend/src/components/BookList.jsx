@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { getAllBooks, deleteBook } from "../api/bookApi";
 
-export default function BookList() {
+export default function BookList({ refresh = 0, onEdit }) {
   const [books, setBooks] = useState([]);
 
   useEffect(() => {
     loadBooks();
-  }, []);
+  }, [refresh]);
 
   async function loadBooks() {
     const data = await getAllBooks();
@@ -20,7 +20,7 @@ export default function BookList() {
 
   return (
     <div>
-      <h2>Books</h2>
+      <h3>Books</h3>
       <table border="1" cellPadding="8">
         <thead>
           <tr>
@@ -28,7 +28,7 @@ export default function BookList() {
             <th>Category</th>
             <th>Authors</th>
             <th>Publishers</th>
-            <th>Action</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -39,6 +39,7 @@ export default function BookList() {
               <td>{b.author_name?.join(", ")}</td>
               <td>{b.publisher_name?.join(", ")}</td>
               <td>
+                <button onClick={() => onEdit && onEdit(b)}>Edit</button>
                 <button onClick={() => handleDelete(b.book_id)}>Delete</button>
               </td>
             </tr>

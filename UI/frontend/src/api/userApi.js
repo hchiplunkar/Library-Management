@@ -1,7 +1,21 @@
 import httpClient from "./httpClient";
 
-export const getAllUsers = () =>
-  httpClient.get("/users").then(res => res.data);
+export const getAllUsers = () => {
+  // Some backends may not support listing users yet; return empty array on error
+  return httpClient
+    .get("/users")
+    .then(res => {
+      const data = res.data;
+      // normalize gateway response { users: [...] } to array
+      if (Array.isArray(data)) return data;
+      if (data && Array.isArray(data.users)) return data.users;
+      return [];
+    })
+    .catch(err => {
+      console.warn("getAllUsers failed, returning empty list:", err.message);
+      return [];
+    });
+};
 
 export const getUser = (user_id) =>
   httpClient.get(`/users/${user_id}`).then(res => res.data);

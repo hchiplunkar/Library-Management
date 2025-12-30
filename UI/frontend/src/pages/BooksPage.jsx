@@ -1,25 +1,28 @@
-import { useQuery } from "@tanstack/react-query";
-import { getAllBooks } from "../api/bookApi";
-import { Box, CircularProgress, Typography } from "@mui/material";
+import BookList from "../components/BookList";
+import BookForm from "../components/BookForm";
+import { Box, Typography } from "@mui/material";
+import { useState } from "react";
 
 export default function BooksPage() {
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["books"],
-    queryFn: getAllBooks
-  });
+  const [refresh, setRefresh] = useState(0);
+  const [selected, setSelected] = useState(null);
 
-  if (isLoading) return <CircularProgress />;
-  if (error) return <Typography>Error loading books</Typography>;
+  function handleSuccess() {
+    setRefresh(r => r + 1);
+    setSelected(null);
+  }
 
   return (
     <Box p={2}>
       <Typography variant="h5">Books</Typography>
-      {data.map(b => (
-        <Box key={b.book_id} p={1} mt={1} border="1px solid #ddd">
-          <Typography>{b.book_name}</Typography>
-          <Typography variant="caption">{b.category_name}</Typography>
+      <Box display="flex" gap={2} mt={2}>
+        <Box flex={1}>
+          <BookList refresh={refresh} onEdit={setSelected} />
         </Box>
-      ))}
+        <Box width={320}>
+          <BookForm onSuccess={handleSuccess} initialData={selected} />
+        </Box>
+      </Box>
     </Box>
   );
 }
