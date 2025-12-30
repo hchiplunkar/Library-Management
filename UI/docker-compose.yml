@@ -1,0 +1,16 @@
+services:
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "8085:8080"
+    environment:
+      OTEL_SERVICE_NAME: api-gateway
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    environment:
+      REACT_APP_API_BASE: http://localhost:8085
+    depends_on:
+      - api-gateway

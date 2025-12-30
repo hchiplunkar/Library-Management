@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package library;
+
+service UserService {
+  rpc CreateUser (CreateUserRequest) returns (UserResponse);
+}
+
+service BookService {
+  rpc AddBook (AddBookRequest) returns (BookResponse);
+}
+
+service ReservationService {
+  rpc ReserveBook (ReservationRequest) returns (ReservationResponse);
+}
+
+message CreateUserRequest {
+  string name = 1;
+  string email = 2;
+  string contactno = 3;
+  string address = 4;
+  string aadhar_id = 5;
+}
+
+message UserResponse {
+  int32 user_id = 1;
+}
+
+message AddBookRequest {
+  string book_name = 1;
+  int32 publisher_id = 2;
+  int32 author_id = 3;
+  int32 category_id = 4;
+}
+
+message BookResponse {
+  int32 book_id = 1;
+  string book_name = 2;
+}
+
+message ReservationRequest {
+  int32 user_id = 1;
+  int32 book_id = 2;
+}
+
+message ReservationResponse {
+  int32 reservation_id = 1;
+}

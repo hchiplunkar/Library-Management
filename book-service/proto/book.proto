@@ -1,0 +1,118 @@
+syntax = "proto3";
+
+package library;
+
+service BookService {
+  // for books
+  rpc AddBook (AddBookRequest) returns (BookResponse);
+  rpc UpdateBook (UpdateBookRequest) returns (BookResponse);
+  rpc DeleteBook (DeleteBookRequest) returns (BookResponse);
+  rpc GetAllBooks (GetAllBooksRequest) returns (GetAllBooksResponse);
+  rpc GetBook (GetBookRequest) returns (GetBookResponse);
+
+  // for book category
+  rpc AddCategory (AddCategoryRequest) returns (CategoryResponse);
+  rpc UpdateCategory (UpdateCategoryRequest) returns (CategoryResponse);
+  rpc DeleteCategory (DeleteCategoryRequest) returns (CategoryResponse);
+  rpc GetAllCategories (GetAllCategoriesRequest) returns (GetAllCategoriesResponse);
+  rpc GetCategory (GetCategoryRequest) returns (GetCategoryResponse);
+
+  // for book authors
+
+  // for book publishers
+}
+
+/*
+  This is related to only book 
+*/
+
+message AddBookRequest {
+  string book_name = 1;
+  int32 publisher_id = 2;
+  int32 author_id = 3;
+  int32 category_id = 4;
+}
+
+message BookResponse {
+  int32 book_id = 1;
+  string book_name = 2;
+}
+
+message UpdateBookRequest {
+  int32 book_id = 1;
+  string book_name = 2;
+  int32 publisher_id = 3;
+  int32 author_id = 4;
+  int32 category_id = 5;
+}
+
+message DeleteBookRequest {
+  int32 book_id = 1;
+}
+
+message GetAllBooksRequest {
+
+}
+
+message BookDetails {
+  int32 book_id = 1;
+  string book_name = 2;
+  string category_name = 3;
+  repeated string author_name = 4;
+  repeated string  publisher_name = 5;
+}
+
+message GetAllBooksResponse {
+  repeated BookDetails  book = 1;
+}
+
+message GetBookRequest {
+  int32 book_id = 1;
+}
+
+message GetBookResponse {
+  BookDetails  book = 1;
+}
+
+/*
+  This is for book category
+*/
+
+message AddCategoryRequest {
+  string category_name = 1;
+}
+
+message CategoryResponse {
+  int32 category_id = 1;
+  string category_name = 2;
+}
+
+message UpdateCategoryRequest {
+  int32 category_id = 1;
+  string category_name = 2;
+}
+
+message DeleteCategoryRequest {
+  int32 category_id = 1;
+}
+
+message GetAllCategoriesRequest {
+
+}
+
+message CategoryDetails {
+  int32 category_id = 1;
+  string category_name = 2;
+}
+
+message GetAllCategoriesResponse {
+  repeated CategoryDetails  category = 1;
+}
+
+message GetCategoryRequest {
+  int32 category_id = 1;
+}
+
+message GetCategoryResponse {
+  CategoryDetails  category = 1;
+}

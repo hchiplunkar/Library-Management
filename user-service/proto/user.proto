@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package library;
+
+service UserService {
+  rpc CreateUser (CreateUserRequest) returns (UserResponse);
+}
+
+message CreateUserRequest {
+  string name = 1;
+  string email = 2;
+  string contactno = 3;
+  string address = 4;
+  string aadhar_id = 5;
+}
+
+message UserResponse {
+  int32 user_id = 1;
+}

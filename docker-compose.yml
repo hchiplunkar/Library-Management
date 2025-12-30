@@ -1,0 +1,78 @@
+services:
+  postgres:
+    image: amd64/postgres:16.11-alpine # Use a specific version for stability
+    container_name: postgres_newdb
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydatabase
+    ports:
+      - "5432:5432"
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_newcontainer
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: mypassword
+    ports:
+      - "8091:80" # Access pgAdmin in your browser at http://localhost:8091
+
+  otel-collector:
+    image: otel/opentelemetry-collector
+    ports:
+      - "4317:4317"
+
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./common:/home/app/common
+    depends_on: [postgres, otel-collector]
+
+  book-service:
+    build: ./book-service
+    container_name: book-service
+    ports:
+      - "5002:5002"
+    volumes:
+      - ./common:/home/app/common  
+    depends_on: [postgres, otel-collector]
+
+  reservation-service:
+    build: ./reservation-service
+    container_name: reservation-service
+    ports:
+      - "5003:5003"
+    volumes:
+      - ./common:/home/app/common  
+    depends_on: [postgres, otel-collector]
+
+  api-gateway:
+    build: ./UI/api-gateway
+    ports:
+      - "8085:8080"
+    environment:
+      OTEL_SERVICE_NAME: api-gateway
+
+  frontend:
+    build: ./UI/frontend
+    ports:
+      - "3000:80"
+    environment:
+      REACT_APP_API_BASE: http://localhost:8085
+    depends_on:
+      - api-gateway
+  frontend_development:
+    image: alpine:3.23.2
+    container_name: frontend_development_env
+    volumes:
+      # Persists data to a local directory on your host machine
+      - ./frontend_development_env:/home/app
+    ports:
+      - "5000:80"
+    command: ['sleep', 'infinity']  # Keeps the container running for development purposes
+    depends_on:
+      - api-gateway
