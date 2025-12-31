@@ -49,6 +49,11 @@ class ReservationServiceStub(object):
                 request_serializer=reservation__pb2.DeleteReservRequest.SerializeToString,
                 response_deserializer=reservation__pb2.ReservationResponse.FromString,
                 _registered_method=True)
+        self.GetAllReservations = channel.unary_unary(
+                '/library.ReservationService/GetAllReservations',
+                request_serializer=reservation__pb2.GetAllReservRequest.SerializeToString,
+                response_deserializer=reservation__pb2.GetAllReservResponse.FromString,
+                _registered_method=True)
 
 
 class ReservationServiceServicer(object):
@@ -72,6 +77,12 @@ class ReservationServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetAllReservations(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_ReservationServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -89,6 +100,11 @@ def add_ReservationServiceServicer_to_server(servicer, server):
                     servicer.DeleteReservation,
                     request_deserializer=reservation__pb2.DeleteReservRequest.FromString,
                     response_serializer=reservation__pb2.ReservationResponse.SerializeToString,
+            ),
+            'GetAllReservations': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetAllReservations,
+                    request_deserializer=reservation__pb2.GetAllReservRequest.FromString,
+                    response_serializer=reservation__pb2.GetAllReservResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -172,6 +188,33 @@ class ReservationService(object):
             '/library.ReservationService/DeleteReservation',
             reservation__pb2.DeleteReservRequest.SerializeToString,
             reservation__pb2.ReservationResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetAllReservations(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/library.ReservationService/GetAllReservations',
+            reservation__pb2.GetAllReservRequest.SerializeToString,
+            reservation__pb2.GetAllReservResponse.FromString,
             options,
             channel_credentials,
             insecure,

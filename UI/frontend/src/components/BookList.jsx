@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getAllBooks, deleteBook } from "../api/bookApi";
 
-export default function BookList({ refresh = 0, onEdit }) {
+export default function BookList({ refresh = 0, onEdit, onReserve }) {
   const [books, setBooks] = useState([]);
 
   useEffect(() => {
@@ -41,6 +41,7 @@ export default function BookList({ refresh = 0, onEdit }) {
               <td>
                 <button onClick={() => onEdit && onEdit(b)}>Edit</button>
                 <button onClick={() => handleDelete(b.book_id)}>Delete</button>
+                <button onClick={() => typeof onReserve === 'function' && onReserve(b)}>Reserve</button>
               </td>
             </tr>
           ))}

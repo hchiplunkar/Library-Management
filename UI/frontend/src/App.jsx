@@ -1,21 +1,25 @@
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import AppLayout from "./components/AppLayout.jsx";
 import BooksPage from "./pages/BooksPage";
 import UsersPage from "./pages/UsersPage";
 import DashboardPage from "./pages/DashboardPage";
+import ReservationsPage from "./pages/ReservationsPage";
+import theme from "./theme";
 
 export default function App() {
   return (
-    <>
-      <nav>
-        <Link to="/dashboard">Dashboard</Link> | {" "}
-        <Link to="/books">Books</Link> | {" "}
-        <Link to="/users">Users</Link>
-      </nav>
-      <Routes>
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/books" element={<BooksPage />} />
-        <Route path="/users" element={<UsersPage />} />
-      </Routes>
-    </>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <AppLayout>
+        <Routes>
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/books" element={<BooksPage />} />
+          <Route path="/users" element={<UsersPage />} />
+          <Route path="/reservations" element={<ReservationsPage />} />
+        </Routes>
+      </AppLayout>
+    </ThemeProvider>
   );
 }

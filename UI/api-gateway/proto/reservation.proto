@@ -5,7 +5,8 @@ package library;
 service ReservationService {
   rpc ReserveBook (ReservationRequest) returns (ReservationResponse);
   rpc Returnbook (ReturnbookRequest) returns (ReservationResponse);
-  rpc DeleteReservation(DeleteReservRequest) returns (ReservationResponse);
+  rpc DeleteReservation (DeleteReservRequest) returns (ReservationResponse);
+  rpc GetAllReservations (GetAllReservRequest) returns (GetAllReservResponse);
 }
 
 message ReservationRequest {
@@ -24,3 +25,20 @@ message ReturnbookRequest {
 message DeleteReservRequest {
   int32 reservation_id = 1;
 }
+
+message GetAllReservRequest {
+
+}
+
+message Reservation_details {
+  int32 reservation_id = 1;
+  int32 user_id = 2;
+  string user_name = 3; 
+  int32 book_id = 4;
+  string book_name = 5;
+}
+
+message GetAllReservResponse {
+  repeated Reservation_details Reservation = 1;
+}
+

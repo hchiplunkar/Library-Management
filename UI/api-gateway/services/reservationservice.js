@@ -37,4 +37,5 @@ export default {
   reserveBook: (payload) => grpcCall("ReserveBook", payload),
   returnBook: (payload) => grpcCall("Returnbook", payload),
   deleteReservation: (payload) => grpcCall("DeleteReservation", payload),
+  getAllReservations: (payload) => grpcCall("GetAllReservations", payload || {}),
 };

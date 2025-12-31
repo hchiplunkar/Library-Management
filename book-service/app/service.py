@@ -19,10 +19,10 @@ class BookService(book_pb2_grpc.BookServiceServicer):
                     category_id=request.category_id
                 )
                 await BookRepository.create(session, book)
+                # BookResponse proto only contains book_id and book_name
                 return book_pb2.BookResponse(
                     book_id=book.book_id,
                     book_name=book.book_name,
-                    category_id=book.category_id
                 )
 
     async def GetBook(self, request, context):
@@ -32,12 +32,15 @@ class BookService(book_pb2_grpc.BookServiceServicer):
                 if not book:
                     context.set_code(5)  # NOT_FOUND
                     context.set_details("Book not found")
-                    return book_pb2.BookResponse()
-                return book_pb2.BookResponse(
+                    return book_pb2.GetBookResponse()
+
+                # Return GetBookResponse containing BookDetails (which includes category_name)
+                book_details = book_pb2.BookDetails(
                     book_id=book.book_id,
                     book_name=book.book_name,
-                    category_id=book.category_id
+                    category_name=getattr(book, "category_name", "")
                 )
+                return book_pb2.GetBookResponse(book=book_details)
             
     async def GetAllBooks(self, request, context):
         with tracer.start_as_current_span("get_all_books"):

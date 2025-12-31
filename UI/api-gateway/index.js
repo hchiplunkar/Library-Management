@@ -175,7 +175,14 @@ app.get("/users", async (req, res) => {
 // ----------------- Reservation Routes -----------------
 app.post("/reservations", async (req, res) => {
   try {
-    const payload = { user_id: parseInt(req.body.user_id), book_id: parseInt(req.body.book_id) };
+    // Validate input at the gateway level
+    const userId = parseInt(req.body.user_id);
+    const bookId = parseInt(req.body.book_id);
+    if (!Number.isInteger(userId) || !Number.isInteger(bookId) || userId <= 0 || bookId <= 0) {
+      return res.status(400).json({ error: "user_id and book_id are required and must be positive integers" });
+    }
+
+    const payload = { user_id: userId, book_id: bookId };
     const response = await reservationService.reserveBook(payload);
     res.json(response);
   } catch (err) {
@@ -200,6 +207,69 @@ app.delete("/reservations/:reservation_id", async (req, res) => {
     const payload = { reservation_id: parseInt(req.params.reservation_id) };
     const response = await reservationService.deleteReservation(payload);
     res.json(response);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get("/reservations", async (req, res) => {
+  try {
+    const response = await reservationService.getAllReservations();
+
+    // Normalize response: support single protobuf message or a list-like shape
+    if (!response) return res.json({ reservations: [] });
+
+    // Prefer the protobuf repeated field name `Reservation` (camel/pascal variations)
+    const list = response.Reservation || response.reservation || response.Reservations || response.reservations || null;
+    if (Array.isArray(list)) {
+      // map protobuf objects to plain shape
+      const mapped = list.map(r => ({
+        reservation_id: r.reservation_id || r.reservationId || 0,
+        user_id: r.user_id || r.userId || 0,
+        user_name: r.user_name || r.userName || "",
+        book_id: r.book_id || r.bookId || 0,
+        book_name: r.book_name || r.bookName || ""
+      }));
+
+      // Enrich with user and book names by calling respective services (batch unique IDs)
+      // Optimization: only request details for entries missing names (reservation service may already provide them)
+      const userIds = [...new Set(mapped.filter(m => !m.user_name).map(m => m.user_id).filter(id => id))];
+      const bookIds = [...new Set(mapped.filter(m => !m.book_name).map(m => m.book_id).filter(id => id))];
+
+      try {
+        const userPromises = userIds.map(id => userService.getUser({ user_id: id }).then(r => [id, r]).catch(() => [id, null]));
+        const bookPromises = bookIds.map(id => bookService.getBook(id).then(r => [id, r]).catch(() => [id, null]));
+
+        const usersRes = await Promise.all(userPromises);
+        const booksRes = await Promise.all(bookPromises);
+
+        const usersMap = new Map(usersRes.map(([id, r]) => [id, r]));
+        const booksMap = new Map(booksRes.map(([id, r]) => [id, r]));
+
+        // populate names
+        for (const m of mapped) {
+          const u = usersMap.get(m.user_id);
+          if (u) {
+            // GetUser returns an object with `name` field
+            m.user_name = u.name || m.user_name || "";
+          }
+
+          const b = booksMap.get(m.book_id);
+          if (b) {
+            // GetBook returns { book: { book_name, ... } }
+            m.book_name = (b.book && b.book.book_name) || b.book_name || m.book_name || "";
+          }
+        }
+      } catch (e) {
+        console.warn("Failed to enrich reservations with names:", e.message || e);
+      }
+
+      return res.json({ reservations: mapped });
+    }
+
+    // fallback: no reservations
+    res.json({ reservations: [] });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });
