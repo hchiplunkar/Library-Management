@@ -18,7 +18,8 @@ Each backend service exposes gRPC endpoints and is instrumented with OpenTelemet
 The easiest way to run the whole system locally is with Docker Compose. From the repository root run:
 
 ```bash
-docker compose up --build
+docker compose build --no-cache
+docker compose up
 ```
 
 This will build and start:
